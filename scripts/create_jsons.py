@@ -25,14 +25,14 @@ def find_leaf_dirs(root: str) -> List[str]:
     return sorted(leaf_dirs)
 
 
-def create_split_jsonl(train_root: str, eval_root: str, dataset_name: str, eval_samples_per_chunk: int = 3):
+def create_split_jsonl(train_root: str, eval_root: str, dataset_name: str, jsons_dir: str, eval_samples_per_chunk: int = 3):
     train_leaf_dirs = find_leaf_dirs(train_root)
     eval_leaf_dirs = find_leaf_dirs(eval_root)
 
     overwatch.info(f"发现 {len(train_leaf_dirs)} 个 train chunk 目录")
     overwatch.info(f"发现 {len(eval_leaf_dirs)} 个 eval chunk 目录")
 
-    os.makedirs("./jsons", exist_ok=True)
+    os.makedirs(jsons_dir, exist_ok=True)
 
     eval_images_entries = []
     cnt = 0
@@ -50,7 +50,7 @@ def create_split_jsonl(train_root: str, eval_root: str, dataset_name: str, eval_
             continue
 
         suffix = f"part_{cnt}"
-        train_jsonl_path = f"./jsons/train_{dataset_name}_{suffix}.jsonl"
+        train_jsonl_path = os.path.join(jsons_dir, f"train_{dataset_name}_{suffix}.jsonl")
         cnt += 1
 
         shared_for_eval = random.sample(images, eval_samples_per_chunk)
@@ -79,7 +79,7 @@ def create_split_jsonl(train_root: str, eval_root: str, dataset_name: str, eval_
         for img in eval_only:
             eval_images_entries.append({"image": img, "//": "from-eval-only"})
 
-    eval_jsonl_path = f"./jsons/eval_{dataset_name}.jsonl"
+    eval_jsonl_path = os.path.join(jsons_dir, f"eval_{dataset_name}.jsonl")
     with open(eval_jsonl_path, "w", encoding="utf-8") as f:
         for entry in eval_images_entries:
             f.write(json.dumps(entry) + "\n")
@@ -89,22 +89,24 @@ def create_split_jsonl(train_root: str, eval_root: str, dataset_name: str, eval_
     # 写 train json（多 part 配置）
     datasets = [f"train_{dataset_name}_part_{i}.jsonl" for i in range(cnt)]
     ratios = [1 / cnt for _ in range(cnt)]
-    train_json_path = f"./jsons/train_{dataset_name}.json"
+    train_json_path = os.path.join(jsons_dir, f"train_{dataset_name}.json")
     with open(train_json_path, "w", encoding="utf-8") as f:
         json.dump({"datasets": datasets, "ratios": ratios}, f, indent=4)
     overwatch.info(f"Train config 写入 {train_json_path}，共 {cnt} parts")
 
     # 写 eval json
-    eval_json_path = f"./jsons/eval_{dataset_name}.json"
+    eval_json_path = os.path.join(jsons_dir, f"eval_{dataset_name}.json")
     with open(eval_json_path, "w", encoding="utf-8") as f:
         json.dump({"datasets": [f"eval_{dataset_name}.jsonl"], "ratios": [1]}, f, indent=4)
     overwatch.info(f"Eval config 写入 {eval_json_path}")
 
 
 if __name__ == "__main__":
+    STAMO_ROOT = Path(__file__).resolve().parent.parent
     create_split_jsonl(
-        train_root="/mnt/nas/datasets4/open-p2p/datasets/train",
-        eval_root="/mnt/nas/datasets4/open-p2p/datasets/eval",
+        train_root=str(STAMO_ROOT / "datasets" / "train"),
+        eval_root=str(STAMO_ROOT / "datasets" / "eval"),
+        jsons_dir=str(STAMO_ROOT / "jsons"),
         dataset_name="cuphead",
         eval_samples_per_chunk=3,
     )

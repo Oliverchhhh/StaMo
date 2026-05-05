@@ -6,7 +6,8 @@ from pathlib import Path
 from multiprocessing import Pool, cpu_count
 
 
-BASE_DIR = Path("/mnt/nas/datasets4/open-p2p/datasets").absolute()
+STAMO_ROOT = Path(__file__).resolve().parent.parent
+BASE_DIR = STAMO_ROOT / "datasets"
 TRAIN_ROOT = BASE_DIR / "train"
 EVAL_ROOT = BASE_DIR / "eval"
 
@@ -126,7 +127,7 @@ def extract_frames(source_root, fps=60, split_ratio=0.8, num_workers=16):
 
 
 if __name__ == "__main__":
-    source_video_dir = "/mnt/nas/datasets4/open-p2p/cuphead"
+    source_video_dir = str(STAMO_ROOT / "cuphead")
 
     if not os.path.exists(source_video_dir):
         print(f"错误: 找不到源视频目录 '{source_video_dir}'")

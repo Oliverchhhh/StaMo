@@ -15,7 +15,7 @@ vision_backbone:
   # model_name: "vit_base_patch16_siglip_224.v2_webli"
   # local_ckpt: "/mnt/public/weight/vit_base_patch16_siglip_224/pytorch_model.bin"
   model_name: "vit_base_patch14_reg4_dinov2.lvd142m"
-  local_ckpt: "/mnt/nas/datasets4/open-p2p/weights/vit_base_patch14_reg4_dinov2.lvd142m/pytorch_model.bin"
+  local_ckpt: "./checkpoints/vit_base_patch14_reg4_dinov2.lvd142m/pytorch_model.bin"
   # model_name: "vit_base_patch14_dinov2.lvd142m"
   # local_ckpt: "/mnt/public/weight/vit_base_patch14_dinov2.lvd142m/pytorch_model.bin"
   # model_name: "vit_so400m_patch14_siglip_224.webli"
@@ -38,7 +38,7 @@ render_net:
   guidance_scale: 1
   num_inference_steps: 50
   sd3:
-    local_ckpt: "/mnt/nas/share/weights/stabilityai/models--stabilityai--stable-diffusion-3-medium-diffusers/snapshots/ea42f8cef0f178587cf766dc8129abd379c90671"
+    local_ckpt: "./checkpoints/stable-diffusion-3-medium-diffusers"
 
 
 data:
@@ -51,14 +51,14 @@ data:
 
 train:
   dist: True
-  epochs: 2000
+  epochs: 40
   num_iters: 10000
-  eval_step: 5000
-  save_step: 5000
-  local_batch_size: 4
+  eval_step: 2000
+  save_step: 2000
+  local_batch_size: 16
   learning_rate: 3e-5
   decay: 1e-3
   constant_lr: False
   eval_scheduler: ddpm
   ckpt_save_dir: "ckpts"
-  gradient_accumulate_steps: 128
+  gradient_accumulate_steps: 1
