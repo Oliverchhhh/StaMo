@@ -1,0 +1,64 @@
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# Never enforce `E501` (line length violations).
+ignore = ["C901", "E501", "E741", "F402", "F823"]
+select = ["C", "E", "F", "I", "W"]
+
+# Ignore import violations in all `__init__.py` files.
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "F401", "F403", "F811"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+known-first-party = ["stamo"]
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stamo"
+version = "0.1.0"
+description = ""
+authors = [
+    { name = "hello3x3", email = "shujiuhe@outlook.com" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "numpy",
+    "torch",
+    "torchvision",
+    "tqdm==4.67.1",
+    "deepspeed==0.14.4",
+    "einops==0.8.1",
+    "jsonlines==4.0.0",
+    "lightning==2.2.1",
+    "lightning-cloud==0.5.70",
+    "diffusers==0.34.0",
+    "timm==1.0.19",
+    "omegaconf==2.3.0",
+    "tensorboard==2.20.0",
+    "accelerate==1.10.0",
+    "ruff==0.13.1",
+    "imageio[ffmpeg]"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]

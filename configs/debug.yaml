@@ -1,0 +1,64 @@
+seed: 33
+do_train: True
+log_dir: "logs"
+resume: False
+resume_path: ""
+task_name: "debug"
+fabric: True
+
+
+vision_backbone:
+  # model_name: "vit_large_patch14_dinov2"
+  # local_ckpt: "/mnt/public/weight/vit_large_patch14_dinov2/pytorch_model.bin"
+  # model_name: "vit_base_patch16_clip_224.openai"
+  # local_ckpt: "/mnt/public/weight/vit_base_patch16_clip_224/pytorch_model.bin"
+  # model_name: "vit_base_patch16_siglip_224.v2_webli"
+  # local_ckpt: "/mnt/public/weight/vit_base_patch16_siglip_224/pytorch_model.bin"
+  model_name: "vit_base_patch14_reg4_dinov2.lvd142m"
+  local_ckpt: "/mnt/public/weight/vit_base_patch14_reg4_dinov2.lvd142m/pytorch_model.bin"
+  # model_name: "vit_base_patch14_dinov2.lvd142m"
+  # local_ckpt: "/mnt/public/weight/vit_base_patch14_dinov2.lvd142m/pytorch_model.bin"
+  # model_name: "vit_so400m_patch14_siglip_224.webli"
+  # local_ckpt: "/mnt/public/weight/vit_so400m_patch14_siglip_224.webli/pytorch_model.bin"
+  pretrained: False
+
+
+projector:
+  num_token: 2
+  num_attn_layers: 6
+  num_attn_compress_layers: 6
+  hidden_dim: 1024
+  cross_attention_dim: 512
+  output_align_dim: 4096
+
+
+render_net:
+  token_dropout: False
+  eval_scheduler: ddpm
+  guidance_scale: 1
+  num_inference_steps: 50
+  sd3:
+    local_ckpt: "/mnt/public/weight/stable-diffusion-3-medium-diffusers"
+
+
+data:
+  flip_p: 0.5
+  img_size: 224
+  num_workers: 32
+  train_json_path: "./jsons/train_libero.json"
+  eval_json_path: "./jsons/eval_libero.json"
+
+
+train:
+  dist: True
+  epochs: 2000
+  num_iters: 10000
+  eval_step: 5000
+  save_step: 5000
+  local_batch_size: 128
+  learning_rate: 3e-5
+  decay: 1e-3
+  constant_lr: False
+  eval_scheduler: ddpm
+  ckpt_save_dir: "ckpts"
+  gradient_accumulate_steps: 1

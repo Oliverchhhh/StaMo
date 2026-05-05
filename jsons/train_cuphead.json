@@ -1,0 +1,8 @@
+{
+    "datasets": [
+        "train_cuphead_part_0.jsonl"
+    ],
+    "ratios": [
+        1.0
+    ]
+}

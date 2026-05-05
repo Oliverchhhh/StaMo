@@ -1,0 +1,6 @@
+{"image": "/home/ch/StaMo/datasets/train/cuphead_v2569165655_chunk_0000/video/frame_000456.jpg", "//": "from-train-shared"}
+{"image": "/home/ch/StaMo/datasets/train/cuphead_v2569165655_chunk_0001/video/frame_000560.jpg", "//": "from-train-shared"}
+{"image": "/home/ch/StaMo/datasets/train/cuphead_v2569165655_chunk_0002/192x192/frame_000899.jpg", "//": "from-train-shared"}
+{"image": "/home/ch/StaMo/datasets/eval/cuphead_v2569165655_chunk_0002/192x192/frame_001086.jpg", "//": "from-eval-only"}
+{"image": "/home/ch/StaMo/datasets/eval/cuphead_v2569165655_chunk_0000/video/frame_000933.jpg", "//": "from-eval-only"}
+{"image": "/home/ch/StaMo/datasets/eval/cuphead_v2569165655_chunk_0000/video/frame_000697.jpg", "//": "from-eval-only"}

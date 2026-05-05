@@ -1,0 +1,8 @@
+{
+    "datasets": [
+        "eval_cuphead.jsonl"
+    ],
+    "ratios": [
+        1
+    ]
+}
