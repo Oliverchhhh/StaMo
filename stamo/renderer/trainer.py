@@ -114,7 +114,6 @@ class Trainer:
             optimizer = self.optimizer[optimizer_idx]
         else:
             optimizer = self.optimizer
-        self.fabric.clip_gradients(self.model, optimizer, max_norm=1.0)
         optimizer.step()
         optimizer.zero_grad()
 
