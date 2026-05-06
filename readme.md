@@ -52,3 +52,14 @@ python scripts/create_jsons.py
 ## 第三步：检验
 
 此时`StaMo`目录下应该存在`jsons`，`cuphead`，`datasets`目录，此时数据下载完毕
+
+
+
+## 第四步：训练
+
+```
+# 在StaMo/目录下
+
+bash scripts/train_libero.sh
+```
+

@@ -317,6 +317,11 @@ class RenderNet(nn.Module):
         indices = (u * self.scheduler_copy.config.num_train_timesteps).long()
         timesteps = self.scheduler_copy.timesteps[indices].to(device=latents.device)
         sigmas = self.get_sigmas(timesteps, n_dim=latents.ndim, dtype=latents.dtype)
+        # debug1
+        if torch.isnan(sigmas).any() or torch.isinf(sigmas).any():
+            print("🔥 NaN/Inf in sigmas")
+            print("sigmas:", sigmas)
+            exit()
         noisy_latents = (1.0 - sigmas) * latents + sigmas * noise
         model_pred = self.DiT(
             hidden_states=noisy_latents,  # [bsz, 16, 64, 64]
@@ -325,12 +330,22 @@ class RenderNet(nn.Module):
             pooled_projections=pooled_projections,  # [bsz, 2048]
             return_dict=False,
         )[0]
+        if torch.isnan(model_pred).any() or torch.isinf(model_pred).any():
+            print("🔥 NaN/Inf in model_pred")
+            exit()
 
         weighting = compute_loss_weighting_for_sd3(weighting_scheme="logit_normal", sigmas=sigmas)
-
+        if torch.isnan(weighting).any() or torch.isinf(weighting).any():
+            print("🔥 NaN/Inf in weighting")
+            print("sigmas:", sigmas)
+            exit()
         target = noise - latents
 
         loss = criterion(weighting, model_pred, target)
+
+        if torch.isnan(loss) or torch.isinf(loss):
+            print("🔥 NaN loss!")
+            exit()
 
         outputs["loss"] = loss
         return outputs
