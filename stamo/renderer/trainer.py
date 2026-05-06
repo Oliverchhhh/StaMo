@@ -7,6 +7,7 @@ import torch.distributed as DIST
 import torchvision.transforms as T
 from lightning.fabric import Fabric
 from lightning.fabric.loggers import TensorBoardLogger
+from lightning.fabric.strategies import DeepSpeedStrategy
 from PIL import Image
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -77,7 +78,27 @@ class Trainer:
 
     def prepare_dist_model(self) -> None:
         tb = TensorBoardLogger(root_dir=self.log_dir, version=0)
-        self.fabric = Fabric(loggers=tb)
+        lt_strategy = os.environ.get("LT_STRATEGY", "")
+        if "deepspeed" in lt_strategy:
+            ds_config = {
+                "bf16": {"enabled": "auto"},
+                "gradient_clipping": 1.0,
+                "train_micro_batch_size_per_gpu": "auto",
+                "train_batch_size": "auto",
+                "gradient_accumulation_steps": "auto",
+                "zero_optimization": {
+                    "stage": 2,
+                    "contiguous_gradients": True,
+                    "overlap_comm": True,
+                    "reduce_scatter": True,
+                    "reduce_bucket_size": 5e8,
+                    "allgather_bucket_size": 5e8,
+                },
+            }
+            strategy = DeepSpeedStrategy(config=ds_config)
+            self.fabric = Fabric(strategy=strategy, loggers=tb)
+        else:
+            self.fabric = Fabric(loggers=tb)
         if self.resume:
             assert os.path.exists(self.resume_path)
 
