@@ -317,35 +317,50 @@ class RenderNet(nn.Module):
         indices = (u * self.scheduler_copy.config.num_train_timesteps).long()
         timesteps = self.scheduler_copy.timesteps[indices].to(device=latents.device)
         sigmas = self.get_sigmas(timesteps, n_dim=latents.ndim, dtype=latents.dtype)
-        # debug1
-        if torch.isnan(sigmas).any() or torch.isinf(sigmas).any():
-            print("🔥 NaN/Inf in sigmas")
-            print("sigmas:", sigmas)
-            exit()
+        
+        # --- Debug 1
+        if not torch.isfinite(sigmas).all():
+            msg = f"🔥 [Rank {getattr(self, 'rank', 0)}] NaN/Inf in sigmas! Timesteps: {timesteps[:5]}"
+            print(msg)
+            raise RuntimeError(msg)
+
         noisy_latents = (1.0 - sigmas) * latents + sigmas * noise
+        
         model_pred = self.DiT(
-            hidden_states=noisy_latents,  # [bsz, 16, 64, 64]
-            timestep=timesteps,  # [bsz]
-            encoder_hidden_states=image_embeddings,  # [bsz, num_tokens, 4096]
-            pooled_projections=pooled_projections,  # [bsz, 2048]
+            hidden_states=noisy_latents,
+            timestep=timesteps,
+            encoder_hidden_states=image_embeddings,
+            pooled_projections=pooled_projections,
             return_dict=False,
         )[0]
-        if torch.isnan(model_pred).any() or torch.isinf(model_pred).any():
-            print("🔥 NaN/Inf in model_pred")
-            exit()
+
+        # --- Debug 2
+        if not torch.isfinite(model_pred).all():
+            emb_status = "NaN" if torch.isnan(image_embeddings).any() else "Finite"
+            msg = f"🔥 [Rank {getattr(self, 'rank', 0)}] NaN in model_pred! Image_embeddings: {emb_status}"
+            print(msg)
+            print(f"Max model_pred: {model_pred.abs().max().item()}") 
+            raise RuntimeError(msg)
 
         weighting = compute_loss_weighting_for_sd3(weighting_scheme="logit_normal", sigmas=sigmas)
-        if torch.isnan(weighting).any() or torch.isinf(weighting).any():
-            print("🔥 NaN/Inf in weighting")
-            print("sigmas:", sigmas)
-            exit()
-        target = noise - latents
+        
+        # --- Debug 3
+        if not torch.isfinite(weighting).all():
+            msg = f"🔥 [Rank {getattr(self, 'rank', 0)}] NaN in weighting! Check logit_normal parameters."
+            print(msg)
+            raise RuntimeError(msg)
 
+        target = noise - latents
         loss = criterion(weighting, model_pred, target)
 
-        if torch.isnan(loss) or torch.isinf(loss):
-            print("🔥 NaN loss!")
-            exit()
+        # --- Debug 4
+        if not torch.isfinite(loss):
+            msg = (f"🔥 [Rank {getattr(self, 'rank', 0)}] NaN Loss! "
+                   f"Weighting max: {weighting.max().item():.4f}, "
+                   f"Pred max: {model_pred.abs().max().item():.4f}, "
+                   f"Target max: {target.abs().max().item():.4f}")
+            print(msg)
+            raise RuntimeError(msg)
 
         outputs["loss"] = loss
         return outputs
