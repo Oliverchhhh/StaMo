@@ -56,6 +56,11 @@ train:
   eval_step: 5000
   save_step: 5000
   local_batch_size: 128
+  # epochs: 200
+  # num_iters: 27000
+  # eval_step: 5000
+  # save_step: 5000
+  # local_batch_size: 64
   learning_rate: 3e-5
   decay: 1e-3
   constant_lr: False
