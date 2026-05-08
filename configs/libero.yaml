@@ -3,7 +3,7 @@ do_train: True
 log_dir: "logs"
 resume: False
 resume_path: ""
-task_name: "libero.2_1024"
+task_name: "cuphead123v1.2_1024"
 fabric: True
 
 
@@ -51,11 +51,11 @@ data:
 
 train:
   dist: True
-  epochs: 40
-  num_iters: 10000
-  eval_step: 2000
-  save_step: 2000
-  local_batch_size: 16
+  epochs: 200
+  num_iters: 15000
+  eval_step: 5000
+  save_step: 5000
+  local_batch_size: 128
   learning_rate: 3e-5
   decay: 1e-3
   constant_lr: False
