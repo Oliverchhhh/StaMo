@@ -3,7 +3,7 @@ do_train: True
 log_dir: "logs"
 resume: False
 resume_path: ""
-task_name: "cuphead123v1.2_1024"
+task_name: "cuphead336123v1.2_1024"
 fabric: True
 
 
@@ -43,7 +43,7 @@ render_net:
 
 data:
   flip_p: 0.5
-  img_size: 224
+  img_size: 336
   num_workers: 32
   train_json_path: "./jsons/train_cuphead.json"
   eval_json_path: "./jsons/eval_cuphead.json"
@@ -55,7 +55,7 @@ train:
   num_iters: 15000
   eval_step: 5000
   save_step: 5000
-  local_batch_size: 128
+  local_batch_size: 64
   # epochs: 200
   # num_iters: 27000
   # eval_step: 5000
@@ -66,4 +66,4 @@ train:
   constant_lr: False
   eval_scheduler: ddpm
   ckpt_save_dir: "ckpts"
-  gradient_accumulate_steps: 1
+  gradient_accumulate_steps: 2
