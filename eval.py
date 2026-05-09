@@ -6,7 +6,7 @@ from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 # =========================
 # 配置你的图片目录
 # =========================
-image_dir = "/home/ch/StaMo/logs/images/12000"
+image_dir = "/home/ch/StaMo/logs/cuphead336/images/26600"
 
 # 支持的图片后缀
 IMG_EXTS = [".jpg", ".jpeg", ".png", ".bmp", ".webp"]

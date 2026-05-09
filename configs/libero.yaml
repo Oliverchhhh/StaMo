@@ -51,10 +51,10 @@ data:
 
 train:
   dist: True
-  epochs: 200
-  num_iters: 15000
-  eval_step: 5000
-  save_step: 5000
+  epochs: 2000
+  num_iters: 150000
+  eval_step: 50000
+  save_step: 50000
   local_batch_size: 64
   # epochs: 200
   # num_iters: 27000
