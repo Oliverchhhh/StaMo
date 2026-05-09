@@ -51,7 +51,7 @@ data:
 
 train:
   dist: True
-  epochs: 2000
+  epochs: 1000
   num_iters: 150000
   eval_step: 50000
   save_step: 50000
